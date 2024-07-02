@@ -21,7 +21,6 @@ async function handelConnection(): Promise<void>{
             process.exit(1);
         }
     }
-
 }
 export default handelConnection;
 

@@ -36,8 +36,8 @@ export async function POST(request: Request, response: Response){
                 const verifyCode = String(100000 + Math.floor(Math.random() * 900000));
                 expiryDate.setHours(expiryDate.getHours() + 3600).toString();
 
-                // user is not verified byt exists
                 let toVerifyUser;
+                // user is not verified byt exists, checking with email
                 if(exisitingUserByEmail){
                     toVerifyUser = exisitingUserByEmail;
                     exisitingUserByEmail.password = hashedPassowrd;
@@ -59,7 +59,7 @@ export async function POST(request: Request, response: Response){
                     toVerifyUser = user;
                 }
 
-                // send verification email;
+                // send verification email
                 const emailRes = await sendVerificationEmail(isValid.data.username, isValid.data.email, toVerifyUser.verifyCode);
                 if(emailRes.success){
                     return Response.json({
