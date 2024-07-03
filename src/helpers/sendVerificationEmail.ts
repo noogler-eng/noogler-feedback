@@ -1,22 +1,26 @@
 import resend from "@/lib/resend";
 import EmailTemplate from "../../emails/verificationEmail";
-import { response } from "@/types/apiResponse";
 
 export async function sendVerificationEmail(
     email: string,
     username: string,
     verificationCode: string
-): Promise<response>{
+): Promise<any>{
     try{
-        await resend.emails.send({
+        const res = await resend.emails.send({
             from: 'Acme <onboarding@resend.dev>',
             to: [email],
             subject: 'feedback | verification email',
             react: EmailTemplate({ firstName: username, verificationCode: verificationCode }),
         });
-      
+        console.log(email, res);
+        let isSuccess = false;
+        if(res.data){
+            isSuccess = true
+        }
+
         return {
-            success: true,
+            success: isSuccess,
             message: 'verification email sent susscessfully'
         }
     }catch(error){

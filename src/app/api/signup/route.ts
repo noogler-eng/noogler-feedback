@@ -13,11 +13,12 @@ export async function POST(request: Request, response: Response){
         const isValid = signUpSchema.safeParse(body);
         if(isValid.success){
 
-            const existingVerifiedUser = await model.UserModel.find({
+            const existingVerifiedUser = await model.UserModel.findOne({
                 username: isValid.data.username,
-                isVeified: trusted
+                isVeified: true
             })
 
+            console.log(existingVerifiedUser)
             if(existingVerifiedUser){
                 return Response.json({
                     success: false,
@@ -45,22 +46,26 @@ export async function POST(request: Request, response: Response){
                     exisitingUserByEmail.verifyCode = verifyCode;
                     await exisitingUserByEmail.save();
                 }else{
-                    const user = await model.UserModel.create({
-                        username: isValid.data?.username,
-                        email: isValid.data?.email,
-                        password: hashedPassowrd,
-                        verifyCodeExpiry: expiryDate,
-                        verifyCode: verifyCode,
-                        isVeified: false,
-                        isAccepting: true,
-                        message: []
-                    })
-                    await user.save();
-                    toVerifyUser = user;
+                    try{
+                        const user = await model.UserModel.create({
+                            username: isValid.data?.username,
+                            email: isValid.data?.email,
+                            password: hashedPassowrd,
+                            verifyCodeExpiry: expiryDate,
+                            isVeified: false,
+                            verifyCode: verifyCode,
+                            isAccepting: true,
+                            message: []
+                        })
+                        await user.save();
+                        toVerifyUser = user;
+                    }catch(error){
+                        console.log("---", error);
+                    }
                 }
 
                 // send verification email
-                const emailRes = await sendVerificationEmail(isValid.data.username, isValid.data.email, toVerifyUser.verifyCode);
+                const emailRes = await sendVerificationEmail(isValid.data.email, isValid.data.username, toVerifyUser.verifyCode);
                 if(emailRes.success){
                     return Response.json({
                         success: true,
