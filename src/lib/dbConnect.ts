@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 type connectionObject = {
     isConnected: number
@@ -8,7 +8,7 @@ let connection: connectionObject;
 
 async function handelConnection(): Promise<void>{
     if(connection.isConnected){
-        console.log("database already connected");
+        console.log("-------database already connected-----");
         return;
     }else{
         try{

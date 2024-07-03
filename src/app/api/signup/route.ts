@@ -1,6 +1,6 @@
-import handelConnection from "@/lib/dibConnect"
+import handelConnection from "@/lib/dbConnect"
 import signUpSchema from "@/schemas/signupSchema"
-import models from "@/model/user"
+import model from "@/model/user"
 import bcrypt from "bcrypt"
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail"
 import { trusted } from "mongoose"
@@ -13,7 +13,7 @@ export async function POST(request: Request, response: Response){
         const isValid = signUpSchema.safeParse(body);
         if(isValid.success){
 
-            const existingVerifiedUser = await models.UserModel.find({
+            const existingVerifiedUser = await model.UserModel.find({
                 username: isValid.data.username,
                 isVeified: trusted
             })
@@ -27,7 +27,7 @@ export async function POST(request: Request, response: Response){
 
                 // find will give us an array of entity
                 // findOne will gives us an user or single entity
-                const exisitingUserByEmail = await models.UserModel.findOne({
+                const exisitingUserByEmail = await model.UserModel.findOne({
                     email: isValid.data.email,
                 })
 
@@ -45,7 +45,7 @@ export async function POST(request: Request, response: Response){
                     exisitingUserByEmail.verifyCode = verifyCode;
                     await exisitingUserByEmail.save();
                 }else{
-                    const user = await models.UserModel.create({
+                    const user = await model.UserModel.create({
                         username: isValid.data?.username,
                         email: isValid.data?.email,
                         password: hashedPassowrd,

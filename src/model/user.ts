@@ -1,22 +1,6 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-export interface Message extends Document{
-    content: string,
-    createdAt: Date
-}
-
-export interface User extends Document{
-    username: string,
-    email: string,
-    password: string,
-    verifyCode: string,
-    isVeified: boolean,
-    verifyCodeExpiry: Date,
-    isAccepting: boolean,
-    message: Message[]
-}
-
-const messageSchema: Schema<Message> = new Schema({
+const messageSchema = new Schema({
     content: {
         type: String,
         required: true
@@ -28,7 +12,7 @@ const messageSchema: Schema<Message> = new Schema({
     }
 })
 
-const userSchema: Schema<User> = new Schema({
+const userSchema = new Schema({
     username: {
         type: String,
         required: [true, "username is required"],
@@ -67,8 +51,8 @@ const userSchema: Schema<User> = new Schema({
     }
 })
 
-
-const UserModel = mongoose.model<User>("User", userSchema)
-const MessageModel = mongoose.model<Message>("Message", messageSchema)
+// mongoose check first if the model exists or not 
+const UserModel = mongoose.models.User || mongoose.model("User", userSchema)
+const MessageModel = mongoose.models.Message || mongoose.model("Message", messageSchema)
 
 export default { UserModel, MessageModel };
